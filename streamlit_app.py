@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import requests
 import streamlit as st
 from bs4 import BeautifulSoup
@@ -55,6 +56,42 @@ def parse_targets(raw: str, default_client: str, global_query: str) -> List[Audi
                 )
             )
     return targets
+
+
+PLOTLY_PREMIUM_TEMPLATE = {
+    "layout": {
+        "paper_bgcolor": "#FBFBFD",
+        "plot_bgcolor": "#FBFBFD",
+        "font": {"family": "Inter, Segoe UI, sans-serif", "color": "#0F172A", "size": 14},
+        "title": {"font": {"size": 22, "color": "#0F172A"}, "x": 0.02},
+        "legend": {"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "left", "x": 0.02},
+        "margin": {"l": 55, "r": 35, "t": 90, "b": 60},
+        "colorway": ["#2563EB", "#14B8A6", "#F59E0B", "#EF4444", "#8B5CF6", "#10B981"],
+        "xaxis": {
+            "gridcolor": "rgba(15, 23, 42, 0.08)",
+            "zerolinecolor": "rgba(15, 23, 42, 0.12)",
+            "linecolor": "rgba(15, 23, 42, 0.25)",
+            "ticks": "outside",
+        },
+        "yaxis": {
+            "gridcolor": "rgba(15, 23, 42, 0.08)",
+            "zerolinecolor": "rgba(15, 23, 42, 0.12)",
+            "linecolor": "rgba(15, 23, 42, 0.25)",
+            "ticks": "outside",
+        },
+    }
+}
+pio.templates["geo_premium"] = go.layout.Template(PLOTLY_PREMIUM_TEMPLATE)
+
+
+def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None = None) -> go.Figure:
+    if title:
+        title_text = f"<b>{title}</b>"
+        if subtitle:
+            title_text += f"<br><span style='font-size:14px;color:#475569'>{subtitle}</span>"
+        fig.update_layout(title=title_text)
+    fig.update_layout(template="geo_premium")
+    return fig
 
 
 def setup_credentials_from_json_bytes(data: bytes) -> str:
@@ -301,7 +338,8 @@ class GeoMultimodalAuditor:
                 },
             )
         )
-        fig_global.update_layout(template="plotly_white", margin=dict(l=40, r=40, t=120, b=40))
+        fig_global = style_figure(fig_global, "Global Multimodal GEO Score", target_query)
+        fig_global.update_layout(margin=dict(l=40, r=40, t=120, b=40))
 
         by_type = df.groupby("type", as_index=False).agg(
             mean_score=("score", "mean"),
@@ -329,7 +367,8 @@ class GeoMultimodalAuditor:
                 line=dict(color="#DC2626", width=2, dash="dash"),
             )
         )
-        fig_radar.update_layout(template="plotly_white", polar=dict(radialaxis=dict(visible=True, range=[0, 1])))
+        fig_radar = style_figure(fig_radar, "Empreinte Multimodale par Type", "Score moyen vs cible 0.75")
+        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])))
 
         df_html = df[df["type"] == "html"].sort_values("position").copy()
         fig_flow = None
@@ -356,7 +395,8 @@ class GeoMultimodalAuditor:
                 )
             )
             fig_flow.add_hline(y=0.75, line_dash="dash", line_color="#DC2626")
-            fig_flow.update_layout(template="plotly_white", xaxis_tickangle=-45)
+            fig_flow = style_figure(fig_flow, "Flux Sémantique des Passages", "Passage Indexing et tendance mobile")
+            fig_flow.update_layout(xaxis_tickangle=-45)
 
         fig_box = px.box(
             df,
@@ -366,8 +406,9 @@ class GeoMultimodalAuditor:
             points="all",
             hover_data=["label", "gap", "priority"],
             template="plotly_white",
-            title="Semantic Relevance Distribution by Asset Type",
+            title="Distribution de pertinence sémantique par type",
         )
+        fig_box = style_figure(fig_box, "Distribution de pertinence sémantique par type", "Vue multimodale par asset")
 
         backlog = df[df["gap"] > 0].sort_values(["priority", "gap"], ascending=False)
         fig_priority = px.scatter(
@@ -380,6 +421,8 @@ class GeoMultimodalAuditor:
             template="plotly_white",
             title="Priority Matrix (Top 30)",
         ) if not backlog.empty else None
+        if fig_priority is not None:
+            fig_priority = style_figure(fig_priority, "Matrice de priorisation", "Top 30 actions à traiter en premier")
 
         image_export_errors: List[str] = []
 
@@ -525,13 +568,13 @@ if run:
                             "PNG export skipped for some charts (Kaleido/Chrome runtime not available). "
                             "HTML charts and CSV files were still generated successfully."
                         )
-                    st.plotly_chart(reports["fig_global"], use_container_width=True)
-                    st.plotly_chart(reports["fig_radar"], use_container_width=True)
+                    st.plotly_chart(reports["fig_global"], use_container_width=True, theme=None)
+                    st.plotly_chart(reports["fig_radar"], use_container_width=True, theme=None)
                     if reports["fig_flow"] is not None:
-                        st.plotly_chart(reports["fig_flow"], use_container_width=True)
-                    st.plotly_chart(reports["fig_box"], use_container_width=True)
+                                    st.plotly_chart(reports["fig_flow"], use_container_width=True, theme=None)
+                                st.plotly_chart(reports["fig_box"], use_container_width=True, theme=None)
                     if reports["fig_priority"] is not None:
-                        st.plotly_chart(reports["fig_priority"], use_container_width=True)
+                                    st.plotly_chart(reports["fig_priority"], use_container_width=True, theme=None)
                     st.dataframe(reports["by_type"], use_container_width=True)
                     st.dataframe(reports["backlog"].head(20), use_container_width=True)
 
