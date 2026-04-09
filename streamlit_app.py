@@ -381,23 +381,31 @@ class GeoMultimodalAuditor:
             title="Priority Matrix (Top 30)",
         ) if not backlog.empty else None
 
+        image_export_errors: List[str] = []
+
+        def safe_write_image(fig, path: str, width: int, height: int, scale: int = 2):
+            try:
+                fig.write_image(path, width=width, height=height, scale=scale)
+            except Exception as e:
+                image_export_errors.append(f"{Path(path).name}: {e}")
+
         # Write artifacts per URL
         fig_global.write_html(str(prefix) + "_00_global_score.html")
-        fig_global.write_image(str(prefix) + "_00_global_score.png", width=1100, height=620, scale=2)
+        safe_write_image(fig_global, str(prefix) + "_00_global_score.png", width=1100, height=620, scale=2)
 
         fig_radar.write_html(str(prefix) + "_01_multimodal_radar.html")
-        fig_radar.write_image(str(prefix) + "_01_multimodal_radar.png", width=900, height=700, scale=2)
+        safe_write_image(fig_radar, str(prefix) + "_01_multimodal_radar.png", width=900, height=700, scale=2)
 
         if fig_flow is not None:
             fig_flow.write_html(str(prefix) + "_02_semantic_flow.html")
-            fig_flow.write_image(str(prefix) + "_02_semantic_flow.png", width=1300, height=650, scale=2)
+            safe_write_image(fig_flow, str(prefix) + "_02_semantic_flow.png", width=1300, height=650, scale=2)
 
         fig_box.write_html(str(prefix) + "_03_multimodal_distribution.html")
-        fig_box.write_image(str(prefix) + "_03_multimodal_distribution.png", width=1100, height=650, scale=2)
+        safe_write_image(fig_box, str(prefix) + "_03_multimodal_distribution.png", width=1100, height=650, scale=2)
 
         if fig_priority is not None:
             fig_priority.write_html(str(prefix) + "_05_priority_matrix.html")
-            fig_priority.write_image(str(prefix) + "_05_priority_matrix.png", width=1100, height=650, scale=2)
+            safe_write_image(fig_priority, str(prefix) + "_05_priority_matrix.png", width=1100, height=650, scale=2)
 
         backlog[["type", "label", "score", "gap", "weight", "priority", "content"]].to_csv(
             str(prefix) + "_04_action_backlog.csv", index=False
@@ -416,6 +424,7 @@ class GeoMultimodalAuditor:
             "fig_priority": fig_priority,
             "backlog": backlog,
             "output_dir": str(out_path),
+            "image_export_errors": image_export_errors,
         }
 
 
@@ -500,6 +509,7 @@ if run:
                         "resolved_query": resolved_query,
                         "assets_scored": len(df_results),
                         "global_score": round(reports["global_score"], 4),
+                        "png_export_errors": len(reports["image_export_errors"]),
                         "output_dir": str(target_dir),
                     }
                 )
@@ -510,6 +520,11 @@ if run:
                     c1, c2 = st.columns(2)
                     c1.metric("Global GEO score", f"{reports['global_score'] * 100:.2f}/100")
                     c2.write(f"Output folder: `{target_dir}`")
+                    if reports["image_export_errors"]:
+                        st.warning(
+                            "PNG export skipped for some charts (Kaleido/Chrome runtime not available). "
+                            "HTML charts and CSV files were still generated successfully."
+                        )
                     st.plotly_chart(reports["fig_global"], use_container_width=True)
                     st.plotly_chart(reports["fig_radar"], use_container_width=True)
                     if reports["fig_flow"] is not None:
