@@ -467,6 +467,21 @@ class GeoMultimodalAuditor:
         by_type.to_csv(str(prefix) + "_06_type_diagnostics.csv", index=False)
         df.to_csv(str(prefix) + "_07_all_scored_assets.csv", index=False)
 
+        # Compatibility outputs to mirror historical livraison_multimodale_unique naming.
+        if fig_flow is not None:
+            fig_flow.write_html(str(prefix) + "_01_semantic_flow.html")
+            safe_write_image(fig_flow, str(prefix) + "_01_semantic_flow.png", width=1300, height=650, scale=2)
+
+        fig_box.write_html(str(prefix) + "_02_multimodal_distribution.html")
+        safe_write_image(fig_box, str(prefix) + "_02_multimodal_distribution.png", width=1100, height=650, scale=2)
+
+        # Alias kept for old runs where distribution used index 01.
+        safe_write_image(fig_box, str(prefix) + "_01_multimodal_distribution.png", width=1100, height=650, scale=2)
+
+        backlog[["type", "label", "score", "gap", "weight", "priority", "content"]].to_csv(
+            str(prefix) + "_03_action_backlog.csv", index=False
+        )
+
         return {
             "global_score": global_score,
             "by_type": by_type,
