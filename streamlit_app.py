@@ -2,6 +2,7 @@ import io
 import json
 import os
 import re
+import zipfile
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -56,6 +57,16 @@ def parse_targets(raw: str, default_client: str, global_query: str) -> List[Audi
                 )
             )
     return targets
+
+
+def zip_directory_bytes(folder: Path) -> bytes:
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for file_path in folder.rglob("*"):
+            if file_path.is_file():
+                zf.write(file_path, arcname=str(file_path.relative_to(folder)))
+    buffer.seek(0)
+    return buffer.getvalue()
 
 
 PLOTLY_PREMIUM_TEMPLATE = {
@@ -592,6 +603,14 @@ if run:
             data=summary_df.to_csv(index=False).encode("utf-8"),
             file_name="run_summary.csv",
             mime="text/csv",
+        )
+
+        run_zip = zip_directory_bytes(run_dir)
+        st.download_button(
+            "Download full run (ZIP)",
+            data=run_zip,
+            file_name=f"{run_id}.zip",
+            mime="application/zip",
         )
 
         st.success("Batch audit completed successfully.")
