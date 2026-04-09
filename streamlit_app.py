@@ -571,10 +571,10 @@ if run:
                     st.plotly_chart(reports["fig_global"], use_container_width=True, theme=None)
                     st.plotly_chart(reports["fig_radar"], use_container_width=True, theme=None)
                     if reports["fig_flow"] is not None:
-                                    st.plotly_chart(reports["fig_flow"], use_container_width=True, theme=None)
-                                st.plotly_chart(reports["fig_box"], use_container_width=True, theme=None)
+                        st.plotly_chart(reports["fig_flow"], use_container_width=True, theme=None)
+                    st.plotly_chart(reports["fig_box"], use_container_width=True, theme=None)
                     if reports["fig_priority"] is not None:
-                                    st.plotly_chart(reports["fig_priority"], use_container_width=True, theme=None)
+                        st.plotly_chart(reports["fig_priority"], use_container_width=True, theme=None)
                     st.dataframe(reports["by_type"], use_container_width=True)
                     st.dataframe(reports["backlog"].head(20), use_container_width=True)
 
