@@ -120,18 +120,18 @@ def setup_credentials_from_json_bytes(data: bytes) -> str:
     return creds["project_id"]
 
 
-def setup_credentials_from_file(path: str) -> str:
-    cred_path = Path(path).expanduser().resolve()
-    if not cred_path.exists():
-        raise FileNotFoundError(f"credentials file not found: {cred_path}")
+def setup_credentials_from_streamlit_secrets() -> Optional[str]:
+    """App-managed auth for Streamlit Cloud (no end-user upload needed)."""
+    if "gcp_service_account" in st.secrets:
+        secret_obj = dict(st.secrets["gcp_service_account"])
+        return setup_credentials_from_json_bytes(json.dumps(secret_obj).encode("utf-8"))
 
-    creds = json.loads(cred_path.read_text(encoding="utf-8"))
-    if "project_id" not in creds:
-        raise ValueError("credentials.json must contain project_id")
+    if "credentials_json" in st.secrets:
+        raw = st.secrets["credentials_json"]
+        if isinstance(raw, str):
+            return setup_credentials_from_json_bytes(raw.encode("utf-8"))
 
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(cred_path)
-    os.environ["GOOGLE_CLOUD_PROJECT"] = creds["project_id"]
-    return creds["project_id"]
+    return None
 
 
 class GeoMultimodalAuditor:
@@ -508,9 +508,7 @@ with st.sidebar:
     output_root = st.text_input("Output root folder", value="streamlit_outputs")
 
     st.subheader("Credentials")
-    cred_mode = st.radio("Credential source", ["Local file", "Upload JSON"], horizontal=True)
-    local_cred_path = st.text_input("Local credentials path", value="credentials.json")
-    uploaded_cred = st.file_uploader("Upload credentials.json", type=["json"])
+    st.caption("Managed by app secrets (recommended). End users do not need to upload keys.")
 
 st.markdown("### Targets")
 st.markdown(
@@ -527,13 +525,18 @@ run = st.button("Run Multimodal Audit", type="primary")
 
 if run:
     try:
-        if cred_mode == "Upload JSON":
-            if uploaded_cred is None:
-                st.error("Please upload credentials.json")
+        project_id = setup_credentials_from_streamlit_secrets()
+        if not project_id:
+            local_creds = Path("credentials.json")
+            if local_creds.exists():
+                # Local dev fallback only.
+                project_id = setup_credentials_from_json_bytes(local_creds.read_bytes())
+            else:
+                st.error(
+                    "Credentials not configured. Add Streamlit secrets key 'gcp_service_account' "
+                    "(full JSON object) or 'credentials_json' (JSON string)."
+                )
                 st.stop()
-            project_id = setup_credentials_from_json_bytes(uploaded_cred.read())
-        else:
-            project_id = setup_credentials_from_file(local_cred_path)
 
         targets = parse_targets(target_lines, default_client=default_client, global_query=global_query)
         if not targets:
