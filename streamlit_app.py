@@ -134,6 +134,14 @@ def setup_credentials_from_streamlit_secrets() -> Optional[str]:
     return None
 
 
+def setup_credentials_from_environment() -> Optional[str]:
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+    credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    if project_id and credentials_path:
+        return project_id
+    return None
+
+
 class GeoMultimodalAuditor:
     def __init__(self, project_id: str, location: str = "us-central1"):
         self.client = genai.Client(vertexai=True, project=project_id, location=location)
@@ -508,7 +516,7 @@ with st.sidebar:
     output_root = st.text_input("Output root folder", value="streamlit_outputs")
 
     st.subheader("Credentials")
-    st.caption("Managed by app secrets (recommended). End users do not need to upload keys.")
+    st.caption("Managed by app secrets or environment variables. End users do not upload keys.")
 
 st.markdown("### Targets")
 st.markdown(
@@ -525,18 +533,13 @@ run = st.button("Run Multimodal Audit", type="primary")
 
 if run:
     try:
-        project_id = setup_credentials_from_streamlit_secrets()
+        project_id = setup_credentials_from_streamlit_secrets() or setup_credentials_from_environment()
         if not project_id:
-            local_creds = Path("credentials.json")
-            if local_creds.exists():
-                # Local dev fallback only.
-                project_id = setup_credentials_from_json_bytes(local_creds.read_bytes())
-            else:
-                st.error(
-                    "Credentials not configured. Add Streamlit secrets key 'gcp_service_account' "
-                    "(full JSON object) or 'credentials_json' (JSON string)."
-                )
-                st.stop()
+            st.error(
+                "Credentials not configured. Add Streamlit secrets key 'gcp_service_account' "
+                "(full JSON object) or set GOOGLE_APPLICATION_CREDENTIALS + GOOGLE_CLOUD_PROJECT."
+            )
+            st.stop()
 
         targets = parse_targets(target_lines, default_client=default_client, global_query=global_query)
         if not targets:
