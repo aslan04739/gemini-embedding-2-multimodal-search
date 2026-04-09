@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+.venv-*/
+
+# Secrets and local runtime
+credentials.json
+.streamlit_runtime/
+.env
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Generated reports
+geo_reports/
+geo_livrables/
+geo_audit_reports/
+livraison_multimodale_unique/
+streamlit_outputs/
+
+# OS / editor
+.DS_Store
+.vscode/
