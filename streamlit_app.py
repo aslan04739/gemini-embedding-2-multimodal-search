@@ -316,6 +316,8 @@ PLOTLY_PREMIUM_TEMPLATE = {
     }
 }
 pio.templates["geo_premium"] = go.layout.Template(PLOTLY_PREMIUM_TEMPLATE)
+# Enforce a light default for all Plotly figures, including exported HTML/PNG files.
+pio.templates.default = "geo_premium"
 
 
 def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None = None) -> go.Figure:
@@ -336,6 +338,24 @@ def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None 
     fig.update_layout(
         template="geo_premium",
         height=600,
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font=dict(color="#0F172A"),
+        hoverlabel=dict(bgcolor="#FFFFFF", font_color="#0F172A", bordercolor="#CBD5E1"),
+        legend=dict(bgcolor="rgba(255,255,255,0.86)", bordercolor="#E2E8F0", borderwidth=1),
+        polar=dict(
+            bgcolor="#FFFFFF",
+            radialaxis=dict(
+                gridcolor="rgba(15, 23, 42, 0.10)",
+                linecolor="rgba(15, 23, 42, 0.25)",
+                tickfont=dict(color="#0F172A"),
+            ),
+            angularaxis=dict(
+                gridcolor="rgba(15, 23, 42, 0.10)",
+                linecolor="rgba(15, 23, 42, 0.25)",
+                tickfont=dict(color="#0F172A"),
+            ),
+        ),
         margin=dict(l=55, r=35, t=140, b=70),
     )
     fig.update_xaxes(automargin=True)
@@ -865,8 +885,7 @@ with st.sidebar:
 st.markdown(f"### {tr(lang, 'targets_header')}")
 st.markdown(tr(lang, "targets_help"))
 default_targets = (
-    "https://www.searchenginejournal.com/what-is-seo/|seo guide|SEJ|blog_article\n"
-    "https://www.riverly.com/bateaux/|boat rental no license|Riverly|category_page"
+    "https://www.searchenginejournal.com/what-is-seo/|seo guide|SEJ|blog_article"
 )
 target_lines = st.text_area(tr(lang, "batch_targets"), value=default_targets, height=160)
 global_query = st.text_input(tr(lang, "global_query"), value="")
