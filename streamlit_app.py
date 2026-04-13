@@ -98,6 +98,14 @@ def zip_directory_to_file(folder: Path, zip_path: Path) -> Path:
     return zip_path
 
 
+def validate_zip_bytes(data: bytes) -> bool:
+    try:
+        with zipfile.ZipFile(io.BytesIO(data), mode="r") as zf:
+            return zf.testzip() is None
+    except zipfile.BadZipFile:
+        return False
+
+
 I18N = {
     "fr": {
         "app_title": "Multimodal GEO Auditor",
@@ -797,8 +805,10 @@ st.set_page_config(page_title="Multimodal GEO Auditor", page_icon="📊", layout
 
 if "last_run_summary_csv" not in st.session_state:
     st.session_state["last_run_summary_csv"] = None
-if "last_run_zip_path" not in st.session_state:
-    st.session_state["last_run_zip_path"] = None
+if "last_run_zip_bytes" not in st.session_state:
+    st.session_state["last_run_zip_bytes"] = None
+if "last_run_zip_name" not in st.session_state:
+    st.session_state["last_run_zip_name"] = None
 if "last_run_id" not in st.session_state:
     st.session_state["last_run_id"] = None
 if "last_run_dir" not in st.session_state:
@@ -1083,10 +1093,12 @@ if run:
 
             st.dataframe(modality_rank, width="stretch")
 
-        zip_path = run_dir.parent / f"{run_id}.zip"
-        zip_directory_to_file(run_dir, zip_path)
+        zip_bytes = zip_directory_bytes(run_dir)
+        if not validate_zip_bytes(zip_bytes):
+            raise RuntimeError("Generated ZIP is invalid. Please rerun the audit.")
         st.session_state["last_run_summary_csv"] = summary_df.to_csv(index=False).encode("utf-8")
-        st.session_state["last_run_zip_path"] = str(zip_path)
+        st.session_state["last_run_zip_bytes"] = zip_bytes
+        st.session_state["last_run_zip_name"] = f"{run_id}.zip"
         st.session_state["last_run_id"] = run_id
         st.session_state["last_run_dir"] = str(run_dir)
 
@@ -1104,18 +1116,14 @@ if st.session_state.get("last_run_summary_csv") is not None:
         mime="text/csv",
     )
 
-if st.session_state.get("last_run_zip_path") and st.session_state.get("last_run_id"):
-    zip_file_path = Path(st.session_state["last_run_zip_path"])
-    if zip_file_path.exists():
-        zip_size_mb = zip_file_path.stat().st_size / (1024 * 1024)
-        st.caption(f"ZIP ready: {zip_file_path.name} ({zip_size_mb:.2f} MB)")
-        with open(zip_file_path, "rb") as fh:
-            zip_bytes = fh.read()
-        st.download_button(
-            tr(lang, "download_zip"),
-            data=zip_bytes,
-            file_name=zip_file_path.name,
-            mime="application/zip",
-        )
-    else:
-        st.warning("ZIP file is missing on disk. Please rerun the audit.")
+if st.session_state.get("last_run_zip_bytes") and st.session_state.get("last_run_id"):
+    zip_bytes = st.session_state["last_run_zip_bytes"]
+    zip_name = st.session_state.get("last_run_zip_name") or f"{st.session_state['last_run_id']}.zip"
+    zip_size_mb = len(zip_bytes) / (1024 * 1024)
+    st.caption(f"ZIP ready: {zip_name} ({zip_size_mb:.2f} MB)")
+    st.download_button(
+        tr(lang, "download_zip"),
+        data=zip_bytes,
+        file_name=zip_name,
+        mime="application/zip",
+    )
