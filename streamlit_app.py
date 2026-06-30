@@ -295,21 +295,21 @@ PLOTLY_PREMIUM_TEMPLATE = {
     "layout": {
         "paper_bgcolor": "#FBFBFD",
         "plot_bgcolor": "#FBFBFD",
-        "font": {"family": "Inter, Segoe UI, sans-serif", "color": "#0F172A", "size": 14},
-        "title": {"font": {"size": 22, "color": "#0F172A"}, "x": 0.02},
+        "font": {"family": "Inter, Segoe UI, sans-serif", "color": "#202124", "size": 14},
+        "title": {"font": {"size": 22, "color": "#001640"}, "x": 0.02},
         "legend": {"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "left", "x": 0.02},
         "margin": {"l": 55, "r": 35, "t": 90, "b": 60},
-        "colorway": ["#47BDEF", "#0860D6", "#39A9E9", "#001640", "#15AD67", "#92D050"],
+        "colorway": ["#47BDEF", "#0860D6", "#39A9E9", "#15AD67", "#92D050", "#FF0000"],
         "xaxis": {
-            "gridcolor": "rgba(15, 23, 42, 0.08)",
-            "zerolinecolor": "rgba(15, 23, 42, 0.12)",
-            "linecolor": "rgba(15, 23, 42, 0.25)",
+            "gridcolor": "rgba(0, 22, 64, 0.08)",
+            "zerolinecolor": "rgba(0, 22, 64, 0.12)",
+            "linecolor": "rgba(0, 22, 64, 0.22)",
             "ticks": "outside",
         },
         "yaxis": {
-            "gridcolor": "rgba(15, 23, 42, 0.08)",
-            "zerolinecolor": "rgba(15, 23, 42, 0.12)",
-            "linecolor": "rgba(15, 23, 42, 0.25)",
+            "gridcolor": "rgba(0, 22, 64, 0.08)",
+            "zerolinecolor": "rgba(0, 22, 64, 0.12)",
+            "linecolor": "rgba(0, 22, 64, 0.22)",
             "ticks": "outside",
         },
         "uniformtext": {"minsize": 9, "mode": "hide"},
@@ -319,12 +319,33 @@ pio.templates["geo_premium"] = go.layout.Template(PLOTLY_PREMIUM_TEMPLATE)
 # Enforce a light default for all Plotly figures, including exported HTML/PNG files.
 pio.templates.default = "geo_premium"
 
+ESKIMOZ_COLORS = {
+    "blue": "#47BDEF",
+    "royal_blue": "#0860D6",
+    "sky_blue": "#39A9E9",
+    "navy": "#001640",
+    "lime": "#92D050",
+    "forest": "#15AD67",
+    "red": "#FF0000",
+    "white": "#FFFFFF",
+    "blue_white": "#F8FDFF",
+    "light_gray": "#F0F1F6",
+    "text": "#202124",
+    "muted": "#353535",
+}
+
+ESKIMOZ_SCORE_SCALE = [
+    [0.0, ESKIMOZ_COLORS["red"]],
+    [0.5, ESKIMOZ_COLORS["blue"]],
+    [1.0, ESKIMOZ_COLORS["forest"]],
+]
+
 
 def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None = None) -> go.Figure:
     if title:
         title_text = f"<b>{title}</b>"
         if subtitle:
-            title_text += f"<br><span style='font-size:13px;color:#475569'>{subtitle}</span>"
+            title_text += f"<br><span style='font-size:13px;color:{ESKIMOZ_COLORS['muted']}'>{subtitle}</span>"
         fig.update_layout(
             title=dict(
                 text=title_text,
@@ -338,22 +359,22 @@ def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None 
     fig.update_layout(
         template="geo_premium",
         height=600,
-        paper_bgcolor="#FFFFFF",
-        plot_bgcolor="#FFFFFF",
-        font=dict(color="#0F172A", family="Inter, Segoe UI, sans-serif"),
-        hoverlabel=dict(bgcolor="#FFFFFF", font_color="#0F172A", bordercolor="#CBD5E1"),
-        legend=dict(bgcolor="rgba(255,255,255,0.86)", bordercolor="#E2E8F0", borderwidth=1),
+        paper_bgcolor=ESKIMOZ_COLORS["white"],
+        plot_bgcolor=ESKIMOZ_COLORS["white"],
+        font=dict(family="Inter, Segoe UI, sans-serif", color=ESKIMOZ_COLORS["text"]),
+        hoverlabel=dict(bgcolor=ESKIMOZ_COLORS["white"], font_color=ESKIMOZ_COLORS["text"], bordercolor="#D9E8F2"),
+        legend=dict(bgcolor="rgba(255,255,255,0.9)", bordercolor="#D9E8F2", borderwidth=1),
         polar=dict(
-            bgcolor="#FFFFFF",
+            bgcolor=ESKIMOZ_COLORS["white"],
             radialaxis=dict(
-                gridcolor="rgba(15, 23, 42, 0.10)",
-                linecolor="rgba(15, 23, 42, 0.25)",
-                tickfont=dict(color="#0F172A"),
+                gridcolor="rgba(0, 22, 64, 0.10)",
+                linecolor="rgba(0, 22, 64, 0.22)",
+                tickfont=dict(color=ESKIMOZ_COLORS["text"]),
             ),
             angularaxis=dict(
-                gridcolor="rgba(15, 23, 42, 0.10)",
-                linecolor="rgba(15, 23, 42, 0.25)",
-                tickfont=dict(color="#0F172A"),
+                gridcolor="rgba(0, 22, 64, 0.10)",
+                linecolor="rgba(0, 22, 64, 0.22)",
+                tickfont=dict(color=ESKIMOZ_COLORS["text"]),
             ),
         ),
         margin=dict(l=55, r=35, t=140, b=70),
@@ -372,7 +393,7 @@ def build_notice_figure(title: str, subtitle: str, message: str) -> go.Figure:
         yref="paper",
         text=message,
         showarrow=False,
-        font=dict(size=16, color="#334155"),
+        font=dict(size=16, color=ESKIMOZ_COLORS["muted"]),
         align="center",
     )
     fig.update_xaxes(visible=False)
@@ -622,14 +643,14 @@ class GeoMultimodalAuditor:
                 },
                 gauge={
                     "axis": {"range": [0, 100]},
-                    "bar": {"color": "#0F172A", "thickness": 0.3},
+                    "bar": {"color": ESKIMOZ_COLORS["navy"], "thickness": 0.3},
                     "steps": [
-                        {"range": [0, 50], "color": "#FDE2E1"},
-                        {"range": [50, 75], "color": "#FFF4CC"},
-                        {"range": [75, 90], "color": "#D8F5DD"},
-                        {"range": [90, 100], "color": "#C7F9CC"},
+                        {"range": [0, 50], "color": "#F0F1F6"},
+                        {"range": [50, 75], "color": "#F8FDFF"},
+                        {"range": [75, 90], "color": "#D9F2FB"},
+                        {"range": [90, 100], "color": "#DFF2E6"},
                     ],
-                    "threshold": {"line": {"color": "#D93025", "width": 4}, "value": 75},
+                    "threshold": {"line": {"color": ESKIMOZ_COLORS["red"], "width": 4}, "value": 75},
                 },
             )
         )
@@ -649,7 +670,7 @@ class GeoMultimodalAuditor:
                 x=by_type["mean_score"],
                 y=by_type["type"],
                 orientation="h",
-                marker=dict(color=by_type["mean_score"], colorscale="RdYlGn", cmin=0, cmax=1),
+                marker=dict(color=by_type["mean_score"], colorscale=ESKIMOZ_SCORE_SCALE, cmin=0, cmax=1),
                 name="Mean score",
             )
         )
@@ -658,7 +679,7 @@ class GeoMultimodalAuditor:
                 x=by_type["target"],
                 y=by_type["type"],
                 mode="markers",
-                marker=dict(color="#DC2626", symbol="line-ns-open", size=18),
+                marker=dict(color=ESKIMOZ_COLORS["red"], symbol="line-ns-open", size=18),
                 name="Target 0.75",
             )
         )
@@ -676,7 +697,7 @@ class GeoMultimodalAuditor:
                 theta=by_type["type"],
                 fill="toself",
                 name="Mean Score",
-                line=dict(color="#2563EB", width=3),
+                line=dict(color=ESKIMOZ_COLORS["blue"], width=3),
             )
         )
         fig_radar.add_trace(
@@ -685,7 +706,7 @@ class GeoMultimodalAuditor:
                 theta=by_type["type"],
                 fill="none",
                 name="Target 0.75",
-                line=dict(color="#DC2626", width=2, dash="dash"),
+                line=dict(color=ESKIMOZ_COLORS["red"], width=2, dash="dash"),
             )
         )
         fig_radar = style_figure(fig_radar, tr(lang, "chart_radar_title"), tr(lang, "chart_radar_subtitle"))
@@ -702,8 +723,8 @@ class GeoMultimodalAuditor:
                     y=df_html["score"],
                     mode="markers+lines",
                     name="Passages",
-                    marker=dict(size=8, color="#6B7280"),
-                    line=dict(color="#9CA3AF", width=1),
+                    marker=dict(size=8, color=ESKIMOZ_COLORS["royal_blue"]),
+                    line=dict(color=ESKIMOZ_COLORS["sky_blue"], width=1),
                 )
             )
             fig_flow.add_trace(
@@ -712,10 +733,10 @@ class GeoMultimodalAuditor:
                     y=df_html["rolling_mean"],
                     mode="lines",
                     name="Trend",
-                    line=dict(color="#2563EB", width=4),
+                    line=dict(color=ESKIMOZ_COLORS["navy"], width=4),
                 )
             )
-            fig_flow.add_hline(y=0.75, line_dash="dash", line_color="#DC2626")
+            fig_flow.add_hline(y=0.75, line_dash="dash", line_color=ESKIMOZ_COLORS["red"])
             fig_flow = style_figure(fig_flow, tr(lang, "chart_flow_title"), tr(lang, "chart_flow_subtitle"))
             fig_flow.update_layout(xaxis_tickangle=-30)
         else:
@@ -732,7 +753,7 @@ class GeoMultimodalAuditor:
             color="type",
             points="all",
             hover_data=["label", "gap", "priority"],
-            template="plotly_white",
+            color_discrete_sequence=[ESKIMOZ_COLORS["blue"], ESKIMOZ_COLORS["royal_blue"], ESKIMOZ_COLORS["sky_blue"], ESKIMOZ_COLORS["forest"], ESKIMOZ_COLORS["lime"], ESKIMOZ_COLORS["red"]],
             title="Distribution de pertinence sémantique par type",
         )
         fig_box = style_figure(fig_box, tr(lang, "chart_dist_title"), tr(lang, "chart_dist_subtitle"))
@@ -746,7 +767,7 @@ class GeoMultimodalAuditor:
             color="type",
             size="priority",
             hover_data=["label"],
-            template="plotly_white",
+            color_discrete_sequence=[ESKIMOZ_COLORS["blue"], ESKIMOZ_COLORS["royal_blue"], ESKIMOZ_COLORS["sky_blue"], ESKIMOZ_COLORS["forest"], ESKIMOZ_COLORS["lime"], ESKIMOZ_COLORS["red"]],
             title="Priority Matrix (Top 30)",
         ) if not backlog.empty else None
         if fig_priority is not None:
@@ -912,6 +933,21 @@ st.markdown(
         line-height: 1.55;
     }
 
+    div[data-testid="metric-container"] {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 22, 64, 0.08);
+        border-radius: 18px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 10px 24px rgba(0, 22, 64, 0.05);
+    }
+
+    div[data-testid="stDataFrame"] {
+        border: 1px solid rgba(0, 22, 64, 0.08);
+        border-radius: 18px;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
     .stSidebar {
         background: linear-gradient(180deg, #ffffff 0%, #f8fdff 100%);
         border-right: 1px solid rgba(0, 22, 64, 0.08);
@@ -941,6 +977,11 @@ st.markdown(
         transform: translateY(-1px);
     }
 
+    .stButton > button:focus,
+    .stDownloadButton > button:focus {
+        box-shadow: 0 0 0 3px rgba(71, 189, 239, 0.22);
+    }
+
     .stTextInput input,
     .stTextArea textarea,
     .stSelectbox div[data-baseweb="select"] > div,
@@ -954,13 +995,6 @@ st.markdown(
         background: rgba(255, 255, 255, 0.95) !important;
     }
 
-    .stMetric {
-        background: white;
-        border: 1px solid rgba(0, 22, 64, 0.08);
-        border-radius: 18px;
-        padding: 1rem;
-        box-shadow: 0 10px 24px rgba(0, 22, 64, 0.05);
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -1190,7 +1224,7 @@ if run:
                 go.Bar(
                     x=modality_rank["type"],
                     y=modality_rank["mean_score"],
-                    marker=dict(color=modality_rank["mean_score"], colorscale="RdYlGn", cmin=0, cmax=1),
+                    marker=dict(color=modality_rank["mean_score"], colorscale=ESKIMOZ_SCORE_SCALE, cmin=0, cmax=1),
                     name="Mean score",
                 )
             )
@@ -1200,7 +1234,7 @@ if run:
                     y=modality_rank["target"],
                     mode="lines+markers",
                     name="Target 0.75",
-                    line=dict(color="#DC2626", dash="dash", width=2),
+                    line=dict(color=ESKIMOZ_COLORS["red"], dash="dash", width=2),
                 )
             )
             fig_modality_bar = style_figure(
@@ -1216,7 +1250,7 @@ if run:
                 path=["type"],
                 values="total_assets",
                 color="mean_score",
-                color_continuous_scale="RdYlGn",
+                color_continuous_scale=ESKIMOZ_SCORE_SCALE,
                 range_color=(0, 1),
                 title=tr(lang, "chart_footprint_title"),
             )
@@ -1239,7 +1273,7 @@ if run:
             if not heatmap_data.empty:
                 fig_heatmap = px.imshow(
                     heatmap_data,
-                    color_continuous_scale="RdYlGn",
+                    color_continuous_scale=ESKIMOZ_SCORE_SCALE,
                     zmin=0,
                     zmax=1,
                     aspect="auto",
@@ -1261,6 +1295,7 @@ if run:
                 barmode="group",
                 hover_data=["total_assets"],
                 title="Template vs Modality Scores",
+                color_discrete_sequence=[ESKIMOZ_COLORS["blue"], ESKIMOZ_COLORS["royal_blue"], ESKIMOZ_COLORS["sky_blue"], ESKIMOZ_COLORS["forest"], ESKIMOZ_COLORS["lime"], ESKIMOZ_COLORS["red"]],
             )
             fig_template_modality = style_figure(
                 fig_template_modality,
