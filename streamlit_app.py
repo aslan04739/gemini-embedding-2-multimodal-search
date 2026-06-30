@@ -865,6 +865,131 @@ st.markdown(
         color: var(--eskimoz-text);
     }
 
+    h1, h2, h3, h4, h5, h6,
+    p, label, span, div, li, strong, code,
+    .stMarkdown, .stCaption, .stText,
+    [data-testid="stHeader"], [data-testid="stSidebarHeader"] {
+        color: var(--eskimoz-text);
+    }
+
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"] * {
+        color: var(--eskimoz-text) !important;
+    }
+
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] span,
+    section[data-testid="stSidebar"] div,
+    section[data-testid="stSidebar"] li,
+    section[data-testid="stSidebar"] .stRadio,
+    section[data-testid="stSidebar"] .stCheckbox,
+    section[data-testid="stSidebar"] .stSelectbox,
+    section[data-testid="stSidebar"] .stTextInput,
+    section[data-testid="stSidebar"] .stTextArea {
+        color: var(--eskimoz-text) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stSidebar"] input,
+    section[data-testid="stSidebar"] textarea,
+    section[data-testid="stSidebar"] [contenteditable="true"],
+    section[data-testid="stSidebar"] [data-baseweb="select"] *,
+    section[data-testid="stSidebar"] [role="radiogroup"] * {
+        color: var(--eskimoz-text) !important;
+        -webkit-text-fill-color: var(--eskimoz-text) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stSidebar"] ::placeholder {
+        color: rgba(32, 33, 36, 0.55) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stSidebar"] svg,
+    section[data-testid="stSidebar"] button {
+        color: inherit;
+    }
+
+    section[data-testid="stSidebar"] .stRadio label,
+    section[data-testid="stSidebar"] .stCheckbox label,
+    section[data-testid="stSidebar"] .stTextInput label,
+    section[data-testid="stSidebar"] .stTextArea label,
+    section[data-testid="stSidebar"] .stSelectbox label {
+        opacity: 1 !important;
+        color: var(--eskimoz-text) !important;
+    }
+
+    .stMarkdown h1,
+    .stMarkdown h2,
+    .stMarkdown h3,
+    .stMarkdown h4 {
+        color: var(--eskimoz-blue-deep);
+    }
+
+    section[data-testid="stMain"],
+    div[data-testid="stAppViewContainer"],
+    section.main {
+        color: var(--eskimoz-text);
+    }
+
+    section[data-testid="stMain"] *,
+    div[data-testid="stAppViewContainer"] *,
+    section.main * {
+        color: var(--eskimoz-text) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stMain"] label,
+    section[data-testid="stMain"] p,
+    section[data-testid="stMain"] span,
+    section[data-testid="stMain"] div,
+    section[data-testid="stMain"] li,
+    div[data-testid="stAppViewContainer"] label,
+    div[data-testid="stAppViewContainer"] p,
+    div[data-testid="stAppViewContainer"] span,
+    div[data-testid="stAppViewContainer"] div,
+    div[data-testid="stAppViewContainer"] li,
+    section.main label,
+    section.main p,
+    section.main span,
+    section.main div,
+    section.main li {
+        color: var(--eskimoz-text) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stMain"] input,
+    section[data-testid="stMain"] textarea,
+    section[data-testid="stMain"] [contenteditable="true"],
+    section[data-testid="stMain"] [data-baseweb="select"] *,
+    section[data-testid="stMain"] [role="radiogroup"] *,
+    div[data-testid="stAppViewContainer"] input,
+    div[data-testid="stAppViewContainer"] textarea,
+    div[data-testid="stAppViewContainer"] [contenteditable="true"],
+    div[data-testid="stAppViewContainer"] [data-baseweb="select"] *,
+    div[data-testid="stAppViewContainer"] [role="radiogroup"] * {
+        color: var(--eskimoz-text) !important;
+        -webkit-text-fill-color: var(--eskimoz-text) !important;
+        opacity: 1 !important;
+    }
+
+    section[data-testid="stMain"] ::placeholder,
+    div[data-testid="stAppViewContainer"] ::placeholder {
+        color: rgba(32, 33, 36, 0.55) !important;
+        opacity: 1 !important;
+    }
+
+    .eskimoz-hero,
+    .eskimoz-hero *,
+    .eskimoz-hero h1,
+    .eskimoz-hero p,
+    .eskimoz-hero span,
+    .eskimoz-hero div {
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+
     .stApp {
         background:
             radial-gradient(circle at top left, rgba(71, 189, 239, 0.10), transparent 28%),
@@ -993,6 +1118,14 @@ st.markdown(
     .stTextArea textarea {
         border: 1px solid rgba(0, 22, 64, 0.14) !important;
         background: rgba(255, 255, 255, 0.95) !important;
+        color: var(--eskimoz-text) !important;
+        -webkit-text-fill-color: var(--eskimoz-text) !important;
+    }
+
+    .stTextInput input::placeholder,
+    .stTextArea textarea::placeholder {
+        color: rgba(32, 33, 36, 0.55) !important;
+        opacity: 1 !important;
     }
 
     </style>
