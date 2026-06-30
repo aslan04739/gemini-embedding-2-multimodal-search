@@ -295,11 +295,11 @@ PLOTLY_PREMIUM_TEMPLATE = {
     "layout": {
         "paper_bgcolor": "#FBFBFD",
         "plot_bgcolor": "#FBFBFD",
-        "font": {"family": "Cairo, Tajawal, Inter, Segoe UI, sans-serif", "color": "#0F172A", "size": 14},
+        "font": {"family": "Inter, Segoe UI, sans-serif", "color": "#0F172A", "size": 14},
         "title": {"font": {"size": 22, "color": "#0F172A"}, "x": 0.02},
         "legend": {"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "left", "x": 0.02},
         "margin": {"l": 55, "r": 35, "t": 90, "b": 60},
-        "colorway": ["#2563EB", "#14B8A6", "#F59E0B", "#EF4444", "#8B5CF6", "#10B981"],
+        "colorway": ["#47BDEF", "#0860D6", "#39A9E9", "#001640", "#15AD67", "#92D050"],
         "xaxis": {
             "gridcolor": "rgba(15, 23, 42, 0.08)",
             "zerolinecolor": "rgba(15, 23, 42, 0.12)",
@@ -340,7 +340,7 @@ def style_figure(fig: go.Figure, title: str | None = None, subtitle: str | None 
         height=600,
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#0F172A"),
+        font=dict(color="#0F172A", family="Inter, Segoe UI, sans-serif"),
         hoverlabel=dict(bgcolor="#FFFFFF", font_color="#0F172A", bordercolor="#CBD5E1"),
         legend=dict(bgcolor="rgba(255,255,255,0.86)", bordercolor="#E2E8F0", borderwidth=1),
         polar=dict(
@@ -821,7 +821,150 @@ class GeoMultimodalAuditor:
         }
 
 
-st.set_page_config(page_title="Multimodal GEO Auditor", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Eskimoz | Multimodal GEO Auditor", page_icon="🔷", layout="wide")
+
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+        --eskimoz-blue: #47BDEF;
+        --eskimoz-blue-deep: #001640;
+        --eskimoz-blue-soft: #F8FDFF;
+        --eskimoz-surface: #FFFFFF;
+        --eskimoz-surface-alt: #F0F1F6;
+        --eskimoz-text: #202124;
+        --eskimoz-muted: #353535;
+        --eskimoz-border: rgba(0, 22, 64, 0.12);
+    }
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+        color: var(--eskimoz-text);
+    }
+
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(71, 189, 239, 0.10), transparent 28%),
+            linear-gradient(180deg, #ffffff 0%, #f8fdff 42%, #f0f1f6 100%);
+    }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .eskimoz-hero {
+        background: linear-gradient(135deg, var(--eskimoz-blue-deep), #0c3c7a 54%, var(--eskimoz-blue));
+        color: #ffffff;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 18px 40px rgba(0, 22, 64, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.25rem;
+    }
+
+    .eskimoz-kicker {
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 600;
+        opacity: 0.9;
+        margin-bottom: 0.75rem;
+    }
+
+    .eskimoz-hero h1 {
+        margin: 0;
+        font-size: 2.6rem;
+        line-height: 1.05;
+        font-weight: 600;
+    }
+
+    .eskimoz-hero p {
+        margin: 0.85rem 0 0;
+        max-width: 72ch;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.92);
+    }
+
+    .eskimoz-card {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--eskimoz-border);
+        border-radius: 20px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 10px 24px rgba(0, 22, 64, 0.06);
+        backdrop-filter: blur(10px);
+        margin-bottom: 1rem;
+    }
+
+    .eskimoz-card h3 {
+        margin: 0 0 0.35rem 0;
+        font-size: 1.02rem;
+        color: var(--eskimoz-blue-deep);
+        font-weight: 600;
+    }
+
+    .eskimoz-card p {
+        margin: 0;
+        color: var(--eskimoz-muted);
+        line-height: 1.55;
+    }
+
+    .stSidebar {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fdff 100%);
+        border-right: 1px solid rgba(0, 22, 64, 0.08);
+    }
+
+    .stSidebar .stForm {
+        border: 1px solid rgba(0, 22, 64, 0.08);
+        border-radius: 20px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.92);
+    }
+
+    .stButton > button,
+    .stDownloadButton > button {
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: linear-gradient(135deg, var(--eskimoz-blue-deep), var(--eskimoz-blue));
+        color: #ffffff;
+        font-weight: 600;
+        padding: 0.7rem 1rem;
+        box-shadow: 0 10px 20px rgba(0, 22, 64, 0.14);
+    }
+
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        border-color: rgba(71, 189, 239, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .stTextInput input,
+    .stTextArea textarea,
+    .stSelectbox div[data-baseweb="select"] > div,
+    .stRadio div[role="radiogroup"] {
+        border-radius: 12px !important;
+    }
+
+    .stTextInput input,
+    .stTextArea textarea {
+        border: 1px solid rgba(0, 22, 64, 0.14) !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+
+    .stMetric {
+        background: white;
+        border: 1px solid rgba(0, 22, 64, 0.08);
+        border-radius: 18px;
+        padding: 1rem;
+        box-shadow: 0 10px 24px rgba(0, 22, 64, 0.05);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 if "last_run_summary_csv" not in st.session_state:
     st.session_state["last_run_summary_csv"] = None
@@ -849,8 +992,26 @@ if lang == "ar":
         unsafe_allow_html=True,
     )
 
-st.title(tr(lang, "app_title"))
-st.caption(tr(lang, "app_caption"))
+st.markdown(
+    f"""
+    <div class="eskimoz-hero">
+        <div class="eskimoz-kicker">Eskimoz · Document de travail interne</div>
+        <h1>{tr(lang, 'app_title')}</h1>
+        <p>{tr(lang, 'app_caption')}</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+    <div class="eskimoz-card">
+        <h3>Ex: Lecture stratégique</h3>
+        <p>Chaque audit met en regard visibilité, qualité des passages et signaux multimodaux pour vous aider à prioriser les actions à plus fort impact business.</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 with st.sidebar:
     st.header(tr(lang, "config_header"))
