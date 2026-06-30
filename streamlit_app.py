@@ -901,6 +901,22 @@ st.markdown(
         opacity: 1 !important;
     }
 
+    section[data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] {
+        background: var(--eskimoz-blue-deep) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    }
+
+    section[data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] *,
+    section[data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] input,
+    section[data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] span {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+
+    section[data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] svg {
+        fill: #ffffff !important;
+    }
+
     section[data-testid="stSidebar"] ::placeholder {
         color: rgba(32, 33, 36, 0.55) !important;
         opacity: 1 !important;
@@ -988,6 +1004,13 @@ st.markdown(
     .eskimoz-hero div {
         color: #ffffff !important;
         opacity: 1 !important;
+    }
+
+    .eskimoz-hero h1,
+    .eskimoz-hero p,
+    .eskimoz-hero .eskimoz-kicker {
+        color: #ffffff !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     }
 
     .stApp {
